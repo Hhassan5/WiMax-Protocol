@@ -1,3 +1,29 @@
+// Hassan Mohamed Hassan
+// Osama Amer
+// Thomas Wahid
+
+// This code implements the interleaver block for data processing, designed to rearrange input bits to 
+// reduce error propagation during transmission. The interleaver operates in three states (idle, 
+// transmit_buff0, transmit_buff1) and uses dual-port RAM for efficient data handling.
+//
+// |Permutation Functions|: Two-step permutation logic reorders bits to spread adjacent coded bits 
+// across non-adjacent positions, improving error resilience. This is done using two separate functions.
+// |DPR|: Provides simultaneous read and write access for efficient buffering and data 
+// interleaving.
+// |States|: Controls the interleaving process by transitioning between idle where we read into bank A,
+// transmitting from buffer 0, where we read into bank B and transmit from bank A, and transmitting from buffer 1
+// where we read again into bank A and transmit bank B.
+// |Flow Control|: Ready/valid handshake ensures proper synchronization with upstream and downstream 
+// modules, allowing seamless integration in a data pipeline.
+// |Counters|: Separate counters for initialization and transmission manage data indexing and 
+// ensure the interleaving process spans the entire block size (Ncbps).
+// |Bitstream Output|: The interleaved bitstream is output along with a valid signal to indicate 
+// readiness for downstream processing.
+//
+// The interleaver is parameterized to support different modulation schemes, with parameters controlling 
+// block size (Ncbps), coded bits per subcarrier (Ncpc), and interleaving depth (d).
+
+
 module tom_interleaver 
     #(
     parameter Ncbps = 192,
