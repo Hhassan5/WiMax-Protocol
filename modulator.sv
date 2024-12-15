@@ -1,3 +1,28 @@
+// Hassan Mohamed Hassan
+// Osama Amer
+// Thomas Wahid
+
+
+// This block implements a QPSK modulator, which maps input serial data into two orthogonal components, I (in-phase) and Q (quadrature-phase), for transmission.
+//
+// |QPSK Mapping|: 
+// - Maps 2-bit input data into predefined 16-bit fixed-point values for the I and Q components. 
+// - The values correspond to the four QPSK constellation points: (00, 01, 10, 11).
+// - Each point represents a phase shift combination for the modulated signal.
+// |Bit Buffering|: 
+// - A 2-bit shift register accumulates incoming serial data to form bit pairs for QPSK mapping.
+// |Timing and Control|: 
+// - A counter (`bit_count`) ensures that two bits are buffered before generating output.
+// - A `valid` signal is asserted once the buffer is ready, ensuring proper data flow downstream.
+// |Output Update|: 
+// - Outputs are updated only when valid input data is received and the bit buffer is full.
+// - Previous I and Q values are held until new valid data is ready, providing smooth transitions.
+// |Flow Control|: 
+// - Implements a ready/valid handshake mechanism to synchronize with upstream and downstream modules.
+// |Pre-Defined Constants|:
+// - I and Q values are scaled and normalized for accurate representation of the QPSK constellation.
+
+
 module modulator 
   (
     input logic serial_in,
