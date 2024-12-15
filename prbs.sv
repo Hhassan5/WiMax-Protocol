@@ -1,3 +1,17 @@
+// Hassan Mohamed Hassan
+// Osama Amer
+// Thomas Wahid
+
+
+// This code implements a Pseudo-Random Binary Sequence (PRBS) generator for data randomization
+// as the very first block of the WiMax PHY layer channel coding process. It uses a 15-bit shift register 
+// initialized with a seed to produce a pseudo-random output sequence. The PRBS output is XORed with the 
+// input data to randomize it. The module supports ready/valid handshake for flow control and can reset 
+// or load a new seed synchronously.
+// The load and enable are used to load different blocks of data continously when tested with the 
+// wrapper top design.
+
+
 `timescale 1ns / 1ns
 
 module prbs 
