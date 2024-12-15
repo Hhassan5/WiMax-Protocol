@@ -1,3 +1,26 @@
+// Hassan Mohamed Hassan
+// Osama Amer
+// Thomas Wahid
+
+
+
+// This code implements a Forward Error Correction (FEC) block that encodes input data to improve 
+// reliability during transmission by detecting and correcting errors. The encoding process uses 
+// a tailbiting convolutional technique, where the shift register is initialized with the last 
+// bits of the input data for seamless encoding across data blocks.
+//
+// |States|: The design has three states (idle, encode, done) to manage the encoding process based on
+//  input readiness and validity signals. Done state was done to accomodate for continous block streaming.
+// |DPR|: The input data is stored and alternately accessed using two data banks where one is read from 
+//  while the other is writing in and vice versa. They are accessed using separate counters.
+// |Toggle Logic|: The encoder toggles between producing the X and Y bits at double the input data 
+//  rate, ensuring compatibility with downstream systems.
+// |Flow Control|: Ready/valid handshake signals ensure proper synchronization between the sender 
+//  and receiver during data transmission.
+// |Clock Domains|: The design operates with two clock signals (50 MHz and 100 MHz) to support 
+// input and output data rates.
+
+
 `timescale 1ns / 1ns
 
 module FEC (
