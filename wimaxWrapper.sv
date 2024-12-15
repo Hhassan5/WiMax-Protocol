@@ -1,3 +1,20 @@
+// Hassan Mohamed Hassan
+// Osama Amer
+// Thomas Wahid
+
+// This module serves as the top-level wrapper for the WiMax, integrating 
+// the PRBS (randomizer), FEC encoder, interleaver, and modulator blocks. It coordinates data flow, 
+// controls the pipeline, and verifies the correctness of each block's output.
+
+// - |Pipeline Integration|: Connects and manages data flow between PRBS, FEC, interleaver, and modulator.
+// - |Control Signals|: Uses `load`, `enable`, and counters to initialize and drive the pipeline stages.
+// - |Output Verification|: Compares outputs of each block against pre-defined reference data and 
+//   asserts correctness flags (`prbs_correct`, `fec_correct`, `inter_correct`, `mod_correct`).
+// - |Flow Management|: Handles data synchronization using readiness and validity signals along with 
+//   clock-based counters.
+//
+// Data is verified to be correct for more than 10 blocks under normal operation.
+
 module wimaxWrapper #(
     parameter [0:95] data_in_wrap = 96'hAC_BC_D2_11_4D_AE_15_77_C6_DB_F4_C9,
     parameter [0:95] prbs_data = 96'h55_8A_C4_A5_3A_17_24_E1_63_AC_2B_F9,
@@ -65,6 +82,7 @@ logic [7:0] fec_counter;
 logic [7:0] inter_counter;
 logic [7:0] mod_counter;
 logic [1:0] bit_counter;
+logic [1:0] bit_counter1;
 logic I_sign;
 logic Q_sign;
 logic counter;
@@ -104,14 +122,13 @@ always_ff @(posedge clk_ref or negedge rst_n) begin
             prbs_correct <= prbs_data[prbs_counter] == data_out_PRBS;
 
         if (valid_out_mod) begin
-	    if (bit_counter == 2)
             mod_correct <= (I_sign == I_data_mod[mod_counter]) & (Q_sign == Q_data_mod[mod_counter]);	
 	end
 	end
 end
 
 
-always_ff @(posedge clk_100 or negedge rst_n) begin
+always_ff @(negedge clk_100 or negedge rst_n) begin
     if (!rst_n) begin
         fec_correct <= 0;
         inter_correct <= 0;
@@ -155,16 +172,8 @@ always_ff @(posedge clk_100 or negedge rst_n) begin
 end
 
 
-always_ff @(posedge clk_100 or negedge rst_n) begin
-    if(!rst_n)
-        bit_counter <= 0;
-    else if (valid_out_mod) begin
-        if (bit_counter == 2)
-            bit_counter <= 0;
-        else
-            bit_counter <= bit_counter + 1;
-    end
-end
+
+
 
 always_ff @(posedge clk_100 or negedge rst_n) begin
     if(!rst_n)
